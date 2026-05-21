@@ -1,0 +1,9 @@
+# Recipients and admin-only paths must be admin-reviewed.
+/.github/   @runway-lab/runway-admins
+/recipients/ @runway-lab/runway-admins
+/CODEOWNERS @runway-lab/runway-admins
+/README.md  @runway-lab/runway-admins
+
+# secrets/ files are intentionally NOT in CODEOWNERS so that a user can
+# self-merge a PR that adds/updates *only* their own secrets/<login>.env.enc.
+# A separate workflow enforces the "owner == github.actor" rule.
