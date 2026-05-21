@@ -72,9 +72,7 @@ jobs:
             esac
 
             if [ "$allowed" != "true" ]; then
-              echo "::notice::PR touches $status $path which is not "\
-"owned by $PR_LOGIN (allowed: $allowed_secret or $allowed_pubkey, "\
-"added/modified). Skipping auto-merge; admin review required."
+              echo "::notice::PR touches $status $path which is not owned by $PR_LOGIN (allowed: $allowed_secret or $allowed_pubkey, added/modified). Skipping auto-merge; admin review required."
               exit 0
             fi
           done
