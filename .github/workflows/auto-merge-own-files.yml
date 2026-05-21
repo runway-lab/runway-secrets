@@ -44,7 +44,7 @@ jobs:
           fi
 
           allowed_secret="secrets/${PR_LOGIN}.env.enc"
-          allowed_pubkey="recipients/${PR_LOGIN}.age.pub"
+          allowed_userkey="recipients/users/${PR_LOGIN}.age.pub"
 
           ok=true
           for entry in "${entries[@]}"; do
@@ -56,23 +56,21 @@ jobs:
             case "$status:$path" in
               added:"$allowed_secret"|modified:"$allowed_secret")
                 allowed=true ;;
-              added:"$allowed_pubkey"|modified:"$allowed_pubkey")
+              added:"$allowed_userkey"|modified:"$allowed_userkey")
                 allowed=true ;;
               renamed:"$allowed_secret")
-                # Only allow rename from another *own* path (unusual but
-                # let's not block legitimate self-renames).
                 [ "$prev" = "$allowed_secret" ] && allowed=true ;;
-              renamed:"$allowed_pubkey")
-                [ "$prev" = "$allowed_pubkey" ] && allowed=true ;;
+              renamed:"$allowed_userkey")
+                [ "$prev" = "$allowed_userkey" ] && allowed=true ;;
               removed:*)
-                # Self-removal of your own files is allowed but rare;
-                # admins typically curate this. Disallow to keep the
-                # path simple — admin can --admin merge if intentional.
+                # Self-removal disallowed via auto-merge; admin must
+                # `--admin` merge intentional cleanups. recipients/agents/*
+                # also never matches (no user has agents/ in their path).
                 allowed=false ;;
             esac
 
             if [ "$allowed" != "true" ]; then
-              echo "::notice::PR touches $status $path which is not owned by $PR_LOGIN (allowed: $allowed_secret or $allowed_pubkey, added/modified). Skipping auto-merge; admin review required."
+              echo "::notice::PR touches $status $path which is not owned by $PR_LOGIN (allowed: $allowed_secret or $allowed_userkey, added/modified). Skipping auto-merge; admin review required."
               exit 0
             fi
           done
